@@ -27,12 +27,13 @@ class MySpider:
 
     def link_crawler(self, seed_url, link_regex):
         self.crawl_queue.append(seed_url)
-        if self.crawl_queue:
+        while self.crawl_queue:
             url = self.crawl_queue.pop()
             html = self.download(url)
             for link in self.get_links(html):
                 if re.match(link_regex,link):
                     self.crawl_queue.append(link)
+                    count += 1
 
     def get_links(self,html):
         webpage_regex = re.compile(r'''<a[^>]+href=["'](.*?)["']''',re.IGNORECASE)
@@ -41,6 +42,6 @@ class MySpider:
 
 if __name__ == '__main__':
     test = MySpider()
-    test.link_crawler(r"http://www.bilibili.com/ranking","//www.bilibili.com/")
+    test.link_crawler(r"http://www.bilibili.com/ranking","//.+\.bilibili\.com/?.+")
     for url in test.crawl_queue:
         print(url)
